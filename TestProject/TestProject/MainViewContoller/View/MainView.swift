@@ -59,7 +59,7 @@ final class MainView: UIView {
     }()
     
     //    текст "Подсчет кол-ва задач"
-    private lazy var labelCountTask: UILabel = {
+    lazy var labelCountTask: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.lightGray
         label.text = "Подсчет кол-ва задач.."
