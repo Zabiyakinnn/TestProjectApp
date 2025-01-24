@@ -12,6 +12,8 @@ final class TaskCell: UITableViewCell {
     
     let formatter = DateFormatter()
     
+    var onStatusChange: ((Bool) -> Void)? // новый статус задачи
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = UIColor.systemBackground
@@ -63,6 +65,8 @@ final class TaskCell: UITableViewCell {
     
     @objc func statusButtonTapped() {
         statusButton.isSelected.toggle()
+        updateToDoLabel(isCompleted: statusButton.isSelected)
+        onStatusChange?(statusButton.isSelected)
     }
     
     func configure(_ todos: Todos) {
@@ -72,6 +76,37 @@ final class TaskCell: UITableViewCell {
         formatter.dateFormat = "dd.MM.yy"
         if let dateTask = todos.date {
             dateTodoLabel.text = formatter.string(from: dateTask)
+        }
+        
+        if let completedTask = todos.completed {
+            statusButton.isSelected = completedTask
+            updateToDoLabel(isCompleted: statusButton.isSelected)
+        }
+    }
+    
+    /// обновление текста в зависимости от статуса задачи
+    /// - Parameter isCompleted: выполненно/ не выполненно
+    private func updateToDoLabel(isCompleted: Bool) {
+        if isCompleted {
+//            задача заверешена
+            let attributedString = NSAttributedString(
+                string: todoLabel.text ?? "",
+                attributes: [
+                    .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+                    .foregroundColor: UIColor.gray
+                ]
+            )
+            todoLabel.attributedText = attributedString
+        } else {
+//            задача не заверешена
+            let attrattributedString = NSAttributedString(
+                string: todoLabel.text ?? "",
+                attributes: [
+                    .strikethroughStyle: 0,
+                    .foregroundColor: UIColor(named: "TextColor") ?? UIColor.gray
+                ]
+            )
+            todoLabel.attributedText = attrattributedString
         }
     }
 }

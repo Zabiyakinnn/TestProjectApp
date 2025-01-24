@@ -18,6 +18,9 @@
 		C21568C92D40CC0900A08E84 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568C82D40CC0900A08E84 /* NetworkService.swift */; };
 		C21568CB2D40CC4500A08E84 /* Todos.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568CA2D40CC4500A08E84 /* Todos.swift */; };
 		C21568CF2D40CF3400A08E84 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568CE2D40CF3400A08E84 /* MainViewModel.swift */; };
+		C21568D22D422ADC00A08E84 /* ToDoList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C21568D02D422ADC00A08E84 /* ToDoList.xcdatamodeld */; };
+		C21568D72D422C3B00A08E84 /* ToDoList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568D52D422C3B00A08E84 /* ToDoList+CoreDataProperties.swift */; };
+		C21568D92D422E3500A08E84 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568D82D422E3500A08E84 /* CoreDataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +38,9 @@
 		C21568C82D40CC0900A08E84 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		C21568CA2D40CC4500A08E84 /* Todos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todos.swift; sourceTree = "<group>"; };
 		C21568CE2D40CF3400A08E84 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		C21568D12D422ADC00A08E84 /* ToDoList.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToDoList.xcdatamodel; sourceTree = "<group>"; };
+		C21568D52D422C3B00A08E84 /* ToDoList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToDoList+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		C21568D82D422E3500A08E84 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		F5EB79A496EC6D8D6636F6A9 /* Pods-TestProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestProject.release.xcconfig"; path = "Target Support Files/Pods-TestProject/Pods-TestProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,13 +77,15 @@
 		C21568AD2D3FE6EA00A08E84 /* TestProject */ = {
 			isa = PBXGroup;
 			children = (
+				C21568C22D3FEC7F00A08E84 /* MainViewContoller */,
+				C21568D32D422C1F00A08E84 /* ModelCoreData */,
 				C21568C72D40CBE800A08E84 /* NetworkManager */,
 				C21568AE2D3FE6EA00A08E84 /* AppDelegate.swift */,
 				C21568B02D3FE6EA00A08E84 /* SceneDelegate.swift */,
-				C21568C22D3FEC7F00A08E84 /* MainViewContoller */,
 				C21568B72D3FE6EF00A08E84 /* Assets.xcassets */,
 				C21568B92D3FE6EF00A08E84 /* LaunchScreen.storyboard */,
 				C21568BC2D3FE6EF00A08E84 /* Info.plist */,
+				C21568D02D422ADC00A08E84 /* ToDoList.xcdatamodeld */,
 			);
 			path = TestProject;
 			sourceTree = "<group>";
@@ -116,6 +124,15 @@
 				C21568CE2D40CF3400A08E84 /* MainViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		C21568D32D422C1F00A08E84 /* ModelCoreData */ = {
+			isa = PBXGroup;
+			children = (
+				C21568D52D422C3B00A08E84 /* ToDoList+CoreDataProperties.swift */,
+				C21568D82D422E3500A08E84 /* CoreDataManager.swift */,
+			);
+			path = ModelCoreData;
 			sourceTree = "<group>";
 		};
 		D382E0C9E7A6CBC7FD13D0EE /* Frameworks */ = {
@@ -256,7 +273,10 @@
 				C21568C92D40CC0900A08E84 /* NetworkService.swift in Sources */,
 				C21568C62D400D7A00A08E84 /* TaskCell.swift in Sources */,
 				C21568CB2D40CC4500A08E84 /* Todos.swift in Sources */,
+				C21568D22D422ADC00A08E84 /* ToDoList.xcdatamodeld in Sources */,
+				C21568D72D422C3B00A08E84 /* ToDoList+CoreDataProperties.swift in Sources */,
 				C21568CF2D40CF3400A08E84 /* MainViewModel.swift in Sources */,
+				C21568D92D422E3500A08E84 /* CoreDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -471,6 +491,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		C21568D02D422ADC00A08E84 /* ToDoList.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				C21568D12D422ADC00A08E84 /* ToDoList.xcdatamodel */,
+			);
+			currentVersion = C21568D12D422ADC00A08E84 /* ToDoList.xcdatamodel */;
+			path = ToDoList.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = C21568A32D3FE6EA00A08E84 /* Project object */;
 }

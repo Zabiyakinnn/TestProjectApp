@@ -9,7 +9,7 @@ import UIKit
 
 final class NetworkService {
     
-    static let shared = NetworkService()
+    public static let shared = NetworkService()
     
     //    запрос для получения списка задач
     func requestToDoList(completion: @escaping ([Todos]) -> Void) {

@@ -61,6 +61,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let todos = viewModel.todos[indexPath.row]
         
         cell?.configure(todos)
+        
+        cell?.onStatusChange = { [weak self] newStatus in
+            guard let self = self else { return }
+            self.viewModel.updateStatusTask(indexPath: indexPath, newStatus: newStatus)
+            mainView.tableView.reloadRows(at: [indexPath], with: .none)
+        }
         return cell ?? UITableViewCell()
     }
     
