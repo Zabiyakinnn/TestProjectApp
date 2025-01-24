@@ -36,6 +36,10 @@ final class CoreDataManager {
         return UIApplication.shared.delegate as! AppDelegate
     }
     
+    func perfomFetch() {
+        try? fetchResultController.performFetch()
+    }
+    
     //    сохранение данных в CoreData
     func saveTodosCoreData(_ todos: [Todos]) {
         
@@ -96,6 +100,48 @@ final class CoreDataManager {
             }
         } catch {
             print("Ошибка обновления статуса задачи в Core Data: \(error.localizedDescription)")
+        }
+    }
+    
+    
+    //    удаление задачи из CoreData
+    func deleteTodosTaskCoreData(_ todos: Todos) {
+        let fetchRequest: NSFetchRequest<ToDoList> = ToDoList.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "todo == %@", todos.todo ?? "")
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            if let taskToDelete = result.first {
+                context.delete(taskToDelete)
+                try context.save()
+            } else {
+                print("Задача не найденна в Core Data")
+            }
+        } catch {
+            print("Ошибка удаления задачи из CoreData: \(error)")
+        }
+    }
+    
+    
+    /// Сохранение новой задачи
+    /// - Parameters:
+    ///   - todo: Название задачи
+    ///   - commentToDo: Комментарий задачи
+    ///   - date: Дата задачи
+    ///   - completion: completion
+    func saveNewTask(todo: String, commentToDo: String?, date: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
+        let newTask = ToDoList(context: context)
+        
+        newTask.todo = todo
+        newTask.commentToDo = commentToDo
+        newTask.date = date
+        newTask.completed = false
+        
+        do {
+            try context.save()
+            completion(.success(()))
+        } catch {
+            completion(.failure((error)))
         }
     }
 }

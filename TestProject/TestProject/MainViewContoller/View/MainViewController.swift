@@ -28,6 +28,7 @@ final class MainViewController: UIViewController {
         mainView.searchBar.searchBar.delegate = self
 
         setupBinding()
+        setupButton()
     }
     
     //    настройка привязок
@@ -47,11 +48,26 @@ final class MainViewController: UIViewController {
         }
     }
 
+//    настройка нажатия кнопки
+    private func setupButton() {
+        mainView.buttonNewTask.addTarget(self, action: #selector(buttonNewTaskTapped), for: .touchUpInside)
+    }
 
+    @objc func buttonNewTaskTapped() {
+        let newTaskVC = NewTaskViewController()
+        newTaskVC.onNewTask = { [weak self] in
+            guard let self = self else { return }
+            viewModel.request {
+                self.mainView.tableView.reloadData()
+                self.mainView.labelCountTask.text = "Кол-во задач: \(self.viewModel.countTask())"
+            }
+        }
+        navigationController?.pushViewController(newTaskVC, animated: true)
+    }
 }
 
-//MARK: - UITableViewDelegate, UITableViewDataSource
-extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+//MARK: - UITableViewDataSource
+extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.countTask()
     }
@@ -65,7 +81,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         cell?.onStatusChange = { [weak self] newStatus in
             guard let self = self else { return }
             self.viewModel.updateStatusTask(indexPath: indexPath, newStatus: newStatus)
-            mainView.tableView.reloadRows(at: [indexPath], with: .none)
+            mainView.tableView.reloadRows(at: [indexPath], with: .automatic)
         }
         return cell ?? UITableViewCell()
     }
@@ -74,6 +90,17 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return UITableView.automaticDimension
     }
     
+}
+
+//MARK: - UITableViewDelegate
+extension MainViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            viewModel.deleteTask(at: indexPath)
+            mainView.tableView.reloadData()
+            mainView.labelCountTask.text = "Кол-во задач: \(viewModel.countTask())"
+        }
+    }
 }
 
 //MARK: - UISearchBarDelegate

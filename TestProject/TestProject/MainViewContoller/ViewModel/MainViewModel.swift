@@ -39,9 +39,18 @@ final class MainViewModel {
         CoreDataManager.shared.updateTaskStatus(todo: taskName, newStatus: newStatus)
     }
     
+    
+    /// Удаление задачи
+    /// - Parameter indexPath: indexPath
+    func deleteTask(at indexPath: IndexPath) {
+        let taskToDelete = todos[indexPath.row]
+        CoreDataManager.shared.deleteTodosTaskCoreData(taskToDelete)
+        todos.remove(at: indexPath.row)
+    }
+    
+    
 //    кол-во задач
     func countTask() -> Int {
         todos.count
     }
-    
 }
