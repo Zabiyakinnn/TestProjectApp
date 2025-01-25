@@ -10,13 +10,23 @@ import UIKit
 final class NewTaskViewController: UIViewController {
     
     private var newTaskView = NewTaskView()
-    private var viewModel = NewTaskViewModel()
+    private var viewModel: NewTaskViewModel
     
     private var calendar = UICalendarView() //календарь
     private var selectedDate: Date?     // выбранная дата
     private var dateOfDone = String()   //преобразование даты в строку для отображения
     
-    var onNewTask: (() -> Void)?
+    var onNewTask: (() -> Void)? // уведомление о новой задаче
+    
+//    MARK: Init
+    init(viewModel: NewTaskViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
 //    MARK: LoadView
     override func loadView() {
@@ -61,16 +71,10 @@ final class NewTaskViewController: UIViewController {
             viewModel.saveNewTask(
                 toDoText: textNameTask,
                 toDoComment: newTaskView.textViewCommentTask.text,
-                toDoDate: selectedDate) { [weak self] result in
-                    switch result {
-                    case .success():
-                        self?.onNewTask?()
-                        self?.navigationController?.popViewController(animated: true)
-                    case .failure(let error):
-                        print("Ошибка сохранения задачи в CoreData: \(error.localizedDescription)")
-                    }
-                }
+                toDoDate: selectedDate)
         }
+        onNewTask?()
+        self.navigationController?.popViewController(animated: true)
     }
     
     //    скрытие клавиатуры
@@ -100,6 +104,7 @@ extension NewTaskViewController {
     }
 }
 
+//MARK: - UICalendarSelectionSingleDateDelegate
 extension NewTaskViewController: UICalendarSelectionSingleDateDelegate {
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
         guard let dateComponents = dateComponents, let date = dateComponents.date else { return }

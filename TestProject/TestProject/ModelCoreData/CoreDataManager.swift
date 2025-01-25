@@ -18,7 +18,7 @@ final class CoreDataManager {
     }
     
 //    MARK: - CoreData
-    private lazy var fetchResultController: NSFetchedResultsController<ToDoList> = {
+    lazy var fetchResultController: NSFetchedResultsController<ToDoList> = {
         let fetchRequest = ToDoList.fetchRequest()
         let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
@@ -61,20 +61,11 @@ final class CoreDataManager {
     }
     
     //    загрузка данных из CoreData
-    func fetchTodosFromCoreData() -> [Todos]? {
+    func fetchTodosFromCoreData() -> [ToDoList]? {
         let fetchRequest: NSFetchRequest<ToDoList> = ToDoList.fetchRequest()
         
         do {
-            let coreDataTodos = try context.fetch(fetchRequest)
-//            конвертируем объекты из CoreDara в модель 'Todos'
-            return coreDataTodos.map { coreDataTodo in
-                Todos(
-                    todo: coreDataTodo.todo,
-                    completed: coreDataTodo.completed,
-                    commentToDo: coreDataTodo.commentToDo,
-                    date: coreDataTodo.date
-                )
-            }
+            return try context.fetch(fetchRequest) // Возвращаем массив объектов ToDoList
         } catch {
             print("Ошибка загрузки данных из Core Dara: \(error.localizedDescription)")
             return nil
@@ -130,16 +121,43 @@ final class CoreDataManager {
     ///   - date: Дата задачи
     ///   - completion: completion
     func saveNewTask(todo: String, commentToDo: String?, date: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
-        let newTask = ToDoList(context: context)
-        
-        newTask.todo = todo
-        newTask.commentToDo = commentToDo
-        newTask.date = date
-        newTask.completed = false
-        
         do {
+            let newTask = ToDoList(context: context)
+            newTask.todo = todo
+            newTask.commentToDo = commentToDo
+            newTask.date = date
             try context.save()
             completion(.success(()))
+        } catch {
+            completion(.failure((error)))
+        }
+    }
+    
+    
+    /// Сохранение отредактрованной задачи
+    /// - Parameters:
+    ///   - task: task
+    ///   - todo: название задачи
+    ///   - commentToDo: комментарий к задаче
+    ///   - date: дата
+    ///   - completed: статус задачи
+    ///   - completion: completion
+    func saveEditTask(task: ToDoList, todo: String, commentToDo: String, date: Date?, completed: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        let fetchRequest: NSFetchRequest<ToDoList> = ToDoList.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "todo == %@", task.todo ?? "")
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            if let changeTask = result.first {
+                changeTask.todo = todo
+                changeTask.commentToDo = commentToDo
+                changeTask.date = date
+                changeTask.completed = completed
+                try context.save()
+                completion(.success(()))
+            } else {
+                print("Задача не найденна")
+            }
         } catch {
             completion(.failure((error)))
         }

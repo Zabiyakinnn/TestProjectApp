@@ -9,11 +9,15 @@ import UIKit
 
 final class NewTaskViewModel {
     
-    private var todos: [Todos] = []
-        
+    var onNewTask: (() -> Void)? // уведомление о новой задаче
+    
     /// Сохранение новой задачи
-    /// - Parameter toDoText: название задачи
-    func saveNewTask(toDoText: String?, toDoComment: String?, toDoDate: Date?, completion: @escaping(Result<Void, Error>) -> Void) {
+    /// - Parameters:
+    ///   - toDoText: название задачи
+    ///   - toDoComment: комментарий к задаче
+    ///   - toDoDate: дата задачи
+    ///   - completion: completion
+    func saveNewTask(toDoText: String?, toDoComment: String?, toDoDate: Date?) {
         guard let toDoText = toDoText, !toDoText.isEmpty else {
             print("Имя задачи не может быть пустым")
             return
@@ -21,17 +25,14 @@ final class NewTaskViewModel {
         CoreDataManager.shared.saveNewTask(
             todo: toDoText,
             commentToDo: toDoComment,
-            date: toDoDate,
-            completion: completion)
-    }
-    
-    func reloadTask() {
-        CoreDataManager.shared.perfomFetch()
-    }
-    
-    func reloadToDoFromCoreData() {
-        if let coreDataTodos = CoreDataManager.shared.fetchTodosFromCoreData() {
-            self.todos = coreDataTodos
-        }
+            date: toDoDate) { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .success():
+                    self.onNewTask?()
+                case .failure(let error):
+                    print("Ошибка сохранения задачи в CoreData: - \(error.localizedDescription)")
+                }
+            }
     }
 }

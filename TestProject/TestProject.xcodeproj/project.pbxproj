@@ -24,6 +24,9 @@
 		C21568DC2D439FFE00A08E84 /* NewTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568DB2D439FFE00A08E84 /* NewTaskViewController.swift */; };
 		C21568DE2D43A02400A08E84 /* NewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568DD2D43A02400A08E84 /* NewTaskView.swift */; };
 		C21568E22D43C8CA00A08E84 /* NewTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568E12D43C8CA00A08E84 /* NewTaskViewModel.swift */; };
+		C21568E52D44CABE00A08E84 /* EditTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568E42D44CABE00A08E84 /* EditTaskViewController.swift */; };
+		C21568E82D44CAD300A08E84 /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568E72D44CAD300A08E84 /* EditTaskView.swift */; };
+		C21568EC2D44D13800A08E84 /* EditTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21568EB2D44D13800A08E84 /* EditTaskViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +50,9 @@
 		C21568DB2D439FFE00A08E84 /* NewTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskViewController.swift; sourceTree = "<group>"; };
 		C21568DD2D43A02400A08E84 /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
 		C21568E12D43C8CA00A08E84 /* NewTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskViewModel.swift; sourceTree = "<group>"; };
+		C21568E42D44CABE00A08E84 /* EditTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskViewController.swift; sourceTree = "<group>"; };
+		C21568E72D44CAD300A08E84 /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
+		C21568EB2D44D13800A08E84 /* EditTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskViewModel.swift; sourceTree = "<group>"; };
 		F5EB79A496EC6D8D6636F6A9 /* Pods-TestProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestProject.release.xcconfig"; path = "Target Support Files/Pods-TestProject/Pods-TestProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,6 +91,7 @@
 			children = (
 				C21568C22D3FEC7F00A08E84 /* MainViewContoller */,
 				C21568DA2D439FE500A08E84 /* NewTaskViewController */,
+				C21568E32D44CA9A00A08E84 /* EditTaskViewController */,
 				C21568D32D422C1F00A08E84 /* ModelCoreData */,
 				C21568C72D40CBE800A08E84 /* NetworkManager */,
 				C21568AE2D3FE6EA00A08E84 /* AppDelegate.swift */,
@@ -166,6 +173,32 @@
 				C21568E12D43C8CA00A08E84 /* NewTaskViewModel.swift */,
 			);
 			path = NewTaskViewModel;
+			sourceTree = "<group>";
+		};
+		C21568E32D44CA9A00A08E84 /* EditTaskViewController */ = {
+			isa = PBXGroup;
+			children = (
+				C21568E62D44CAC300A08E84 /* View */,
+				C21568EA2D44D12300A08E84 /* EditTaskViewModel */,
+			);
+			path = EditTaskViewController;
+			sourceTree = "<group>";
+		};
+		C21568E62D44CAC300A08E84 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				C21568E42D44CABE00A08E84 /* EditTaskViewController.swift */,
+				C21568E72D44CAD300A08E84 /* EditTaskView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		C21568EA2D44D12300A08E84 /* EditTaskViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				C21568EB2D44D13800A08E84 /* EditTaskViewModel.swift */,
+			);
+			path = EditTaskViewModel;
 			sourceTree = "<group>";
 		};
 		D382E0C9E7A6CBC7FD13D0EE /* Frameworks */ = {
@@ -300,16 +333,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				C21568E22D43C8CA00A08E84 /* NewTaskViewModel.swift in Sources */,
+				C21568E82D44CAD300A08E84 /* EditTaskView.swift in Sources */,
 				C21568B32D3FE6EA00A08E84 /* MainViewController.swift in Sources */,
 				C21568C42D3FEF5B00A08E84 /* MainView.swift in Sources */,
 				C21568AF2D3FE6EA00A08E84 /* AppDelegate.swift in Sources */,
 				C21568B12D3FE6EA00A08E84 /* SceneDelegate.swift in Sources */,
 				C21568C92D40CC0900A08E84 /* NetworkService.swift in Sources */,
 				C21568C62D400D7A00A08E84 /* TaskCell.swift in Sources */,
+				C21568E52D44CABE00A08E84 /* EditTaskViewController.swift in Sources */,
 				C21568CB2D40CC4500A08E84 /* Todos.swift in Sources */,
 				C21568D22D422ADC00A08E84 /* ToDoList.xcdatamodeld in Sources */,
 				C21568DE2D43A02400A08E84 /* NewTaskView.swift in Sources */,
 				C21568D72D422C3B00A08E84 /* ToDoList+CoreDataProperties.swift in Sources */,
+				C21568EC2D44D13800A08E84 /* EditTaskViewModel.swift in Sources */,
 				C21568CF2D40CF3400A08E84 /* MainViewModel.swift in Sources */,
 				C21568DC2D439FFE00A08E84 /* NewTaskViewController.swift in Sources */,
 				C21568D92D422E3500A08E84 /* CoreDataManager.swift in Sources */,

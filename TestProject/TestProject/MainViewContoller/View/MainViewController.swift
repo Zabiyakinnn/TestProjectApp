@@ -25,16 +25,26 @@ final class MainViewController: UIViewController {
         
         mainView.tableView.delegate = self
         mainView.tableView.dataSource = self
-        mainView.searchBar.searchBar.delegate = self
 
         setupBinding()
         setupButton()
+        
+        mainView.searchBar.searchResultsUpdater = self
+        mainView.searchBar.obscuresBackgroundDuringPresentation = false
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        
+        // Обновляем отступы таблицы для searchBar
+        let safeArea = view.safeAreaInsets.top
+        mainView.updateTableViewTopInset(safeArea + 0)
     }
     
     //    настройка привязок
     private func setupBinding() {
-        mainView.searchBar.navigationItem.searchController = mainView.searchBar
-        mainView.searchBar.navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = mainView.searchBar
+        self.navigationItem.hidesSearchBarWhenScrolling = true
         
         let customView = mainView.labelHeadline
         let leftBarButtonItem = UIBarButtonItem(customView: customView)
@@ -48,14 +58,17 @@ final class MainViewController: UIViewController {
         }
     }
 
+//    MARK: Button
 //    настройка нажатия кнопки
     private func setupButton() {
         mainView.buttonNewTask.addTarget(self, action: #selector(buttonNewTaskTapped), for: .touchUpInside)
     }
 
+//    обработка нажатия
     @objc func buttonNewTaskTapped() {
-        let newTaskVC = NewTaskViewController()
-        newTaskVC.onNewTask = { [weak self] in
+        let newTaskViewModel = NewTaskViewModel()
+        let newTaskVC = NewTaskViewController(viewModel: newTaskViewModel)
+        newTaskViewModel.onNewTask = { [weak self] in
             guard let self = self else { return }
             viewModel.request {
                 self.mainView.tableView.reloadData()
@@ -66,28 +79,83 @@ final class MainViewController: UIViewController {
     }
 }
 
+//MARK: - UISearchResultsUpdating
+extension MainViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let search = searchController.searchBar.text, !search.isEmpty else {
+            //если строка пустая
+            viewModel.resetSarch()
+            mainView.tableView.reloadData()
+            return
+        }
+        //если есть ввод
+        viewModel.filtredTodos(search: search)
+        mainView.tableView.reloadData()
+    }
+}
+
 //MARK: - UITableViewDataSource
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.countTask()
+        return viewModel.isSearching ? viewModel.filtredTodos.count : viewModel.todos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: taskCell, for: indexPath) as? TaskCell
-        let todos = viewModel.todos[indexPath.row]
+        let task = viewModel.isSearching ? viewModel.filtredTodos[indexPath.row] : viewModel.todos[indexPath.row]
         
-        cell?.configure(todos)
+        cell?.configure(task)
         
         cell?.onStatusChange = { [weak self] newStatus in
             guard let self = self else { return }
             self.viewModel.updateStatusTask(indexPath: indexPath, newStatus: newStatus)
             mainView.tableView.reloadRows(at: [indexPath], with: .automatic)
         }
+        
+//        редактирование задачи
+        cell?.onEditTaskVC = { [weak self] in
+            guard let self = self else { return }
+            let selectedToDo = viewModel.todos[indexPath.row]
+            let selectedToDoList = CoreDataManager.shared.fetchTodosFromCoreData()?.first(where: { $0.todo == selectedToDo.todo })
+            let editTaskViewModel = EditTaskViewModel(todos: selectedToDo, toDoList: selectedToDoList)
+            let editTaskVC = EditTaskViewController(viewModel: editTaskViewModel)
+            editTaskViewModel.onEditTask = {
+                self.mainView.tableView.reloadData()
+            }
+            self.navigationController?.pushViewController(editTaskVC, animated: true)
+        }
+        
+//        удаление задачи
+        cell?.onDeleteTask = { [weak self] in
+            guard let self = self else { return }
+            viewModel.deleteTask(at: indexPath)
+            mainView.tableView.reloadData()
+            mainView.labelCountTask.text = "Кол-во задач: \(viewModel.countTask())"
+        }
         return cell ?? UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedToDo = viewModel.todos[indexPath.row]
+        
+        let selectedToDoList = CoreDataManager.shared.fetchTodosFromCoreData()?.first(where: { $0.todo == selectedToDo.todo })
+        let editTaskViewModel = EditTaskViewModel(todos: selectedToDo, toDoList: selectedToDoList)
+        editTaskViewModel.onEditTask = { [weak self] in
+            guard let self = self else { return }
+            viewModel.request {
+                self.mainView.tableView.reloadData()
+            }
+        }
+        
+        let editTaskVC = EditTaskViewController(viewModel: editTaskViewModel)
+        
+        self.navigationController?.pushViewController(editTaskVC, animated: true)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
 }
@@ -103,19 +171,4 @@ extension MainViewController: UITableViewDelegate {
     }
 }
 
-//MARK: - UISearchBarDelegate
-extension MainViewController: UISearchBarDelegate {
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        mainView.updateTableViewTopInset(0)
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        mainView.updateTableViewTopInset(110)
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-}
 

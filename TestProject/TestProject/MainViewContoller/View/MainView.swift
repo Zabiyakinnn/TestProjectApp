@@ -40,6 +40,8 @@ final class MainView: UIView {
         searchBar.searchBar.searchTextField.leftView?.tintColor = .lightGray
         searchBar.searchBar.searchTextField.textColor = .lightGray
         searchBar.searchBar.searchTextField.backgroundColor = UIColor.systemBackground
+        searchBar.searchBar.isTranslucent = false
+
         return searchBar
     }()
     
@@ -107,9 +109,9 @@ extension MainView {
             make.centerX.equalToSuperview()
         }
         tableView.snp.makeConstraints { make in
-            self.tableViewTopConstraint = make.top.equalToSuperview().inset(110).constraint
-            make.left.right.equalToSuperview().inset(0)
-            make.bottom.equalTo(buttomView.snp.top).inset(0)
+            make.top.equalTo(safeAreaLayoutGuide.snp.top)
+            make.left.right.equalToSuperview()
+            make.bottom.equalTo(buttomView.snp.top)
         }
     }
     

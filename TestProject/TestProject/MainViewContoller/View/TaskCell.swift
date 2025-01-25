@@ -13,10 +13,15 @@ final class TaskCell: UITableViewCell {
     let formatter = DateFormatter()
     
     var onStatusChange: ((Bool) -> Void)? // новый статус задачи
+    var onEditTaskVC: (() -> Void)? // уведомление о нажатии на ContextMenu (редактировать)
+    var onDeleteTask: (() -> Void)? // уведомление о нажатии на кнопку "Удалить"
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = UIColor.systemBackground
+        
+        let interaction = UIContextMenuInteraction(delegate: self)
+        self.addInteraction(interaction)
         
         setupLoyout()
     }
@@ -70,6 +75,12 @@ final class TaskCell: UITableViewCell {
     }
     
     func configure(_ todos: Todos) {
+        // Сбрасываем данные ячейки
+        todoLabel.text = nil
+        commentLabel.text = nil
+        dateTodoLabel.text = nil
+        statusButton.isSelected = false
+        
         todoLabel.text = todos.todo
         commentLabel.text = todos.commentToDo
         
@@ -143,6 +154,35 @@ extension TaskCell {
             make.left.equalTo(contentView.snp.left).inset(50)
             make.top.equalTo(commentLabel.snp.bottom).inset(-7)
             make.bottom.equalTo(contentView.snp.bottom).inset(10)
+        }
+    }
+}
+
+//MARK: - UIContextMenuInteractionDelegate
+extension TaskCell: UIContextMenuInteractionDelegate {
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ -> UIMenu in
+            let editAction = UIAction(
+                title: "Редактировать",
+                image: UIImage(systemName: "square.and.pencil")
+            ) { _ in
+                self.onEditTaskVC?()
+            }
+            let shareAction = UIAction(
+                title: "Поделиться",
+                image: UIImage(systemName: "square.and.arrow.up")
+            ) { _ in
+                print("Поделиться")
+            }
+            let trashAction = UIAction(
+                title: "Удалить",
+                image: UIImage(systemName: "trash")
+            ) { _ in
+                self.onDeleteTask?()
+            }
+            return UIMenu(title: "", children: [editAction, shareAction, trashAction])
         }
     }
 }
