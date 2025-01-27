@@ -25,7 +25,7 @@ final class MainViewController: UIViewController {
         
         mainView.tableView.delegate = self
         mainView.tableView.dataSource = self
-
+        setupNavigation()
         setupBinding()
         setupButton()
         
@@ -33,6 +33,7 @@ final class MainViewController: UIViewController {
         mainView.searchBar.obscuresBackgroundDuringPresentation = false
     }
     
+//    MARK: - ViewSafeAreaInsetsDidChange
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
         
@@ -43,6 +44,15 @@ final class MainViewController: UIViewController {
     
     //    настройка привязок
     private func setupBinding() {
+        viewModel.request { [weak self] in
+            guard let self = self else { return }
+            mainView.labelCountTask.text = "Кол-во задач: \(viewModel.countTask())"
+            mainView.tableView.reloadData()
+        }
+    }
+    
+//    настройка навигации
+    private func setupNavigation() {
         navigationItem.searchController = mainView.searchBar
         self.navigationItem.hidesSearchBarWhenScrolling = true
         
@@ -50,13 +60,8 @@ final class MainViewController: UIViewController {
         let leftBarButtonItem = UIBarButtonItem(customView: customView)
         self.navigationItem.leftBarButtonItem = leftBarButtonItem
         self.navigationItem.searchController = mainView.searchBar
-        
-        viewModel.request { [weak self] in
-            guard let self = self else { return }
-            mainView.labelCountTask.text = "Кол-во задач: \(viewModel.countTask())"
-            mainView.tableView.reloadData()
-        }
     }
+
 
 //    MARK: Button
 //    настройка нажатия кнопки
@@ -115,7 +120,7 @@ extension MainViewController: UITableViewDataSource {
 //        редактирование задачи
         cell?.onEditTaskVC = { [weak self] in
             guard let self = self else { return }
-            let selectedToDo = viewModel.todos[indexPath.row]
+            let selectedToDo = !viewModel.filtredTodos.isEmpty ? viewModel.filtredTodos[indexPath.row] : viewModel.todos[indexPath.row]
             let selectedToDoList = CoreDataManager.shared.fetchTodosFromCoreData()?.first(where: { $0.todo == selectedToDo.todo })
             let editTaskViewModel = EditTaskViewModel(todos: selectedToDo, toDoList: selectedToDoList)
             let editTaskVC = EditTaskViewController(viewModel: editTaskViewModel)
@@ -140,7 +145,7 @@ extension MainViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedToDo = viewModel.todos[indexPath.row]
+        let selectedToDo = !viewModel.filtredTodos.isEmpty ? viewModel.filtredTodos[indexPath.row] : viewModel.todos[indexPath.row]
         
         let selectedToDoList = CoreDataManager.shared.fetchTodosFromCoreData()?.first(where: { $0.todo == selectedToDo.todo })
         let editTaskViewModel = EditTaskViewModel(todos: selectedToDo, toDoList: selectedToDoList)

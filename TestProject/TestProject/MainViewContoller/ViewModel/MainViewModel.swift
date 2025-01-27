@@ -74,22 +74,49 @@ final class MainViewModel {
     ///   - indexPath: indexPath выбранной задачи
     ///   - newStatus: новый статус задачи
     func updateStatusTask(indexPath: IndexPath, newStatus: Bool) {
-        let taskName = todos[indexPath.row].todo ?? ""
-        todos[indexPath.row].completed = newStatus
-        CoreDataManager.shared.updateTaskStatus(todo: taskName, newStatus: newStatus)
+        if isSearching { // при использование поиска по задачам
+            if let filtredTaskName = filtredTodos[indexPath.row].todo {
+                filtredTodos[indexPath.row].completed = newStatus
+            // обновить статус задачи в todos по имени
+                if let todosIndex = todos.firstIndex(where: { $0.todo == filtredTaskName }) {
+                    todos[todosIndex].completed = newStatus
+                }
+                // сохранить в CoreData
+                CoreDataManager.shared.updateTaskStatus(todo: filtredTaskName, newStatus: newStatus)
+            } else {
+                print("Задача не найденна")
+            }
+        } else {
+            // без использования поиска и работой с todos
+            if let todosTask = todos[indexPath.row].todo {
+                todos[indexPath.row].completed = newStatus
+                CoreDataManager.shared.updateTaskStatus(todo: todosTask, newStatus: newStatus)
+            } else {
+                print("Задача не найденна")
+            }
+         }
     }
-    
     
     /// Удаление задачи
     /// - Parameter indexPath: indexPath
     func deleteTask(at indexPath: IndexPath) {
-        let taskToDelete = todos[indexPath.row]
-        CoreDataManager.shared.deleteTodosTaskCoreData(taskToDelete)
-        todos.remove(at: indexPath.row)
+        if isSearching {
+            let filtredDelete = filtredTodos[indexPath.row]
+            // удаление задачи в основном массиве todos по имени
+            if let todosIndex = todos.firstIndex(where: { $0.todo == filtredDelete.todo }) {
+                todos.remove(at: todosIndex)
+            }
+            CoreDataManager.shared.deleteTodosTaskCoreData(filtredDelete)
+            filtredTodos.remove(at: indexPath.row)
+        } else {
+            let todosDelete = todos[indexPath.row]
+            CoreDataManager.shared.deleteTodosTaskCoreData(todosDelete)
+            todos.remove(at: indexPath.row)
+        }
     }
     
     
-//    кол-во задач
+//    кол-во задач todos
     func countTask() -> Int {
         todos.count
     }

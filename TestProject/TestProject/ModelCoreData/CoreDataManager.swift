@@ -40,6 +40,10 @@ final class CoreDataManager {
         try? fetchResultController.performFetch()
     }
     
+    func task(indexPath: IndexPath) -> ToDoList? {
+       return fetchResultController.object(at: indexPath)
+    }
+    
     //    сохранение данных в CoreData
     func saveTodosCoreData(_ todos: [Todos]) {
         
@@ -85,7 +89,6 @@ final class CoreDataManager {
             if let taskToUpdate = result.first {
                 taskToUpdate.completed = newStatus
                 try context.save()
-//                print("Статус задачи изменен и сохранен в Core Data")
             } else {
                 print("Задача с указанным названием не найдена")
             }
